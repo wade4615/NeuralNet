@@ -1,179 +1,151 @@
 #include "Matrix.h"
 
-Matrix::Matrix(int rows, int columns) : rows(rows), columns(columns) {
-    values = new double*[rows];
-    for(auto i=0; i< rows; i++){
-        values[i] = new double[columns];
+Matrix::Matrix(unsigned rowSize, unsigned colSize, double initial){
+    m_rowSize = rowSize;
+    m_colSize = colSize;
+    m_matrix.resize(rowSize);
+    for (auto i = 0; i < m_matrix.size(); i++) {
+        m_matrix[i].resize(colSize, initial);
     }
 }
-
-Matrix::Matrix(const Matrix& rhs) : rows(rhs.rows), columns(rhs.columns) {
-    values = new double*[rows];
-    for(auto i=0; i< rows; i++){
-        values[i] = new double[columns];
-    }
-    for (auto i = 0; i < rows; i++) {
-        for (auto j = 0; j < columns; j++) {
-                values[i][j] = rhs.values[i][j];
-        }
-    }
-}
-
 Matrix::~Matrix() {
-    for(auto i=0; i< rows; i++){
-        delete[] values[i];
-    }
-    delete[] values;
 }
 
-double randDouble(double a, double b) {
-	return ((double)rand() / RAND_MAX) * (b - a) + a;
+vector<double>& Matrix::operator[](const unsigned &index){
+    return m_matrix[index];
 }
 
-void Matrix::randomFill(double lowerBound, double upperBound){
-    srand (time(NULL));
-    for(auto i=0; i< rows; i++){
-        for(auto j=0; j< columns; j++){
-            values[i][j] = randDouble(lowerBound, upperBound);
+Matrix Matrix::operator+(Matrix &other){
+    Matrix sum(m_colSize, m_rowSize, 0.0);
+    for (auto i = 0; i < m_rowSize; i++) {
+        for (auto j = 0; j < m_colSize; j++) {
+            sum(i,j) = this->m_matrix[i][j] + other(i,j);
         }
     }
+    return sum;
 }
 
-void Matrix::show() {
-    std::string delimiter = "";
-    for (auto i = 0; i < rows; i++) {
-        delimiter = "";
-        for (auto j = 0; j < columns; j++) {
-            std::cout << delimiter << values[i][j];
-            delimiter = ",";
+Matrix Matrix::operator-(Matrix &other){
+    Matrix diff(m_colSize, m_rowSize, 0.0);
+    unsigned i,j;
+    for (i = 0; i < m_rowSize; i++) {
+        for (j = 0; j < m_colSize; j++) {
+            diff(i,j) = this->m_matrix[i][j] - other(i,j);
         }
-        std::cout << std::endl;
     }
+    return diff;
 }
 
-Matrix& Matrix::operator=(const Matrix& rhs) {
-    if (&rhs == this) {
-        return *this;
-    }
-    for(auto i=0; i< rows; i++){
-        delete[] values[i];
-    }
-    delete[] values;
-
-    values = new double*[rhs.rows];
-    for(auto i=0; i< rows; i++){
-        values[i] = new double[rhs.columns];
-    }
-    for (auto i = 0; i < rhs.rows; i++) {
-        for (auto j = 0; j < rhs.columns; j++) {
-                values[i][j] = rhs.values[i][j];
+Matrix Matrix::operator*(Matrix &other){
+    Matrix multip(m_rowSize,other.getCols(),0.0);
+    if(m_colSize == other.getRows()) {
+        unsigned i,j,k;
+        double temp = 0.0;
+        for (i = 0; i < m_rowSize; i++)
+        {
+            for (j = 0; j < other.getCols(); j++)
+            {
+                temp = 0.0;
+                for (k = 0; k < m_colSize; k++)
+                {
+                    temp += m_matrix[i][k] * other(k,j);
+                }
+                multip(i,j) = temp;
+            }
         }
+        return multip;
     }
     return *this;
 }
 
-double*& Matrix::operator [](int index){
-    return values[index];
-}
-
-Matrix Matrix::operator*(Matrix &rhs) {
-    if (columns != rhs.rows) {
-        throw std::length_error("Matrices shapes mismatch");
-    } else {
-        Matrix Temp1(rows,rhs.columns);
-
-        int sum = 0;
-        for(auto i=0;i<rows;i++) {
-            for(auto j=0; j<rhs.columns;j++) {
-                sum = 0;
-                for(auto k=0; k<rows;k++) {
-                    sum += values[i][k]*rhs[k][j];
-                }
-                Temp1[i][j] = sum;
-            }
+Matrix Matrix::transpose(){
+    Matrix Transpose(m_colSize,m_rowSize,0.0);
+    for (unsigned i = 0; i < m_colSize; i++) {
+        for (unsigned j = 0; j < m_rowSize; j++) {
+            Transpose(i,j) = this->m_matrix[j][i];
         }
-        return Temp1;
     }
-    return rhs;
+    return Transpose;
 }
 
-
-Array Matrix::operator*(Array &rhs) {
-    if (columns != rhs.entries) {
-        throw std::length_error("Matrices shapes mismatch");
-    } else {
-        Array result(rhs.entries);
-
-        for (auto i=0;i<rhs.entries;i++) {
-            result[i]=0.0;
+Matrix Matrix::operator+(double scalar){
+    Matrix result(m_rowSize,m_colSize,0.0);
+    unsigned i,j;
+    for (i = 0; i < m_rowSize; i++) {
+        for (j = 0; j < m_colSize; j++) {
+            result(i,j) = this->m_matrix[i][j] + scalar;
         }
-        for (auto i=0;i<rows;i++) {
-            for (auto j=0;j<columns;j++){
-                result[i]+=values[i][j]*rhs[j];
-            }
+    }
+    return result;
+}
+
+Matrix Matrix::operator-(double scalar){
+    Matrix result(m_rowSize,m_colSize,0.0);
+    unsigned i,j;
+    for (i = 0; i < m_rowSize; i++) {
+        for (j = 0; j < m_colSize; j++) {
+            result(i,j) = this->m_matrix[i][j] - scalar;
         }
-        return result;
     }
-    return rhs;
+    return result;
 }
 
-Array::Array(int entries) : entries(entries) {
-    values = new double[entries];
+Matrix Matrix::operator*(double scalar){
+    Matrix result(m_rowSize,m_colSize,0.0);
+    unsigned i,j;
+    for (i = 0; i < m_rowSize; i++) {
+        for (j = 0; j < m_colSize; j++) {
+            result(i,j) = this->m_matrix[i][j] * scalar;
+        }
+    }
+    return result;
 }
 
-Array::Array(const Array& rhs) : entries(entries) {
-    values = new double[entries];
-    for (auto i = 0; i < entries; i++) {
-        values[i] = rhs.values[i];
+Matrix Matrix::operator/(double scalar){
+    Matrix result(m_rowSize,m_colSize,0.0);
+    unsigned i,j;
+    for (i = 0; i < m_rowSize; i++) {
+        for (j = 0; j < m_colSize; j++) {
+            result(i,j) = this->m_matrix[i][j] / scalar;
+        }
     }
+    return result;
+}
+
+double& Matrix::operator()(const unsigned &rowNo, const unsigned & colNo)
+{
+    return this->m_matrix[rowNo][colNo];
+}
+
+void Matrix::print() const{
+    cout << "Matrix: " << endl;
+    for (unsigned i = 0; i < m_rowSize; i++) {
+        for (unsigned j = 0; j < m_colSize; j++) {
+            cout << "[" << m_matrix[i][j] << "] ";
+        }
+        cout << endl;
+    }
+}
+
+unsigned Matrix::getRows() const{
+    return m_rowSize;
+}
+
+unsigned Matrix::getCols() const{
+    return m_colSize;
+}
+
+
+
+
+Array::Array(unsigned size, double initial){
+    m_size = size;
+    m_matrix.resize(size);
 }
 
 Array::~Array() {
-    delete[] values;
 }
 
-void Array::randomFill(double lowerBound, double upperBound){
-    srand (time(NULL));
-    for(auto i=0; i< entries; i++){
-        values[i] = randDouble(lowerBound, upperBound);
-    }
-}
-
-void Array::show() {
-    std::string delimiter = "";
-    for (auto i = 0; i < entries; i++) {
-        std::cout << delimiter << values[i];
-        delimiter = ",";
-    }
-    std::cout << std::endl;
-}
-
-Array& Array::operator=(const Array& rhs) {
-    if (&rhs == this) {
-        return *this;
-    }
-    delete[] values;
-
-    values = new double[rhs.entries];
-    for (auto i = 0; i < rhs.entries; i++) {
-        values[i] = rhs.values[i];
-    }
-    return *this;
-}
-
-double& Array::operator [](int index){
-    return values[index];
-}
-
-double Array::operator*(Array &rhs) {
-    if (entries != rhs.entries) {
-        throw std::length_error("Matrices shapes mismatch");
-    } else {
-        double sum = 0.0;
-        for(auto i=0;i<entries;i++) {
-            sum += values[i]*rhs[i];
-        }
-        return sum;
-    }
-    return -1;
+double& Array::operator[](const unsigned &index){
+    return m_matrix[index];
 }

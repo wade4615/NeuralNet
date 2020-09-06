@@ -3,47 +3,60 @@
 
 using namespace std;
 
-#include <iostream>
-#include <random>
-#include <stdexcept>
 #include <stdio.h>
-#include <string.h>
+#include <fstream> // for file access
 #include <iostream>
+#include <stdlib.h>
+#include <sstream>
 #include <string>
-#include <ctime>
-#include <cstdlib>
+#include <vector>
+#include <tuple>
+#include <cmath>
+
+using namespace std;
 
 class Array;
 
 class Matrix {
     protected:
-        double** values;
-        int rows;
-        int columns;
+        unsigned m_rowSize;
+        unsigned m_colSize;
+        vector<vector<double>> m_matrix;
     public:
-        Matrix(int rows, int columns);
-        Matrix(const Matrix& rhs);
+        Matrix(unsigned rowSize, unsigned colSize, double initial);
         ~Matrix();
-        void randomFill(double lowerBound, double upperBound);
-        void show();
-        Matrix& operator=(const Matrix& rhs);
-        double *& operator [](int index);
-        Matrix operator*(Matrix &x);
-        Array operator*(Array &x);
+        Matrix operator+(Matrix &);
+        Matrix operator-(Matrix &);
+        Matrix operator*(Matrix &);
+        Matrix transpose();
+        Matrix operator+(double);
+        Matrix operator-(double);
+        Matrix operator*(double);
+        Matrix operator/(double);
+        double& operator()(const unsigned &, const unsigned &);
+        vector<double>& operator[](const unsigned &);
+        void print() const;
+        unsigned getRows() const;
+        unsigned getCols() const;
 };
 
 class Array {
     protected:
-        double* values;
+        unsigned m_size;
+        vector<double> m_matrix;
     public:
-        int entries;
-        Array(int entries);
-        Array(const Array& rhs);
+        Array(unsigned size, double initial);
         ~Array();
-        void randomFill(double lowerBound, double upperBound);
-        void show();
-        Array& operator=(const Array& rhs);
-        double& operator [](int index);
-        double operator*(Array &x);
+        Array operator+(Array &);
+        Array operator-(Array &);
+        Array operator*(Array &);
+        Array operator+(double);
+        Array operator-(double);
+        Array operator*(double);
+        Array operator/(double);
+        double& operator()(const unsigned &);
+        double& operator[](const unsigned &);
+        void print() const;
+        unsigned getSize() const;
 };
 #endif // MATRIX_H
