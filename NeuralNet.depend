@@ -1,13 +1,13 @@
 # depslib dependency file v1.0
-1599405157 source:c:\projects\neuralnet\main.cpp
+1599409645 source:c:\projects\neuralnet\main.cpp
 	<iostream>
 	<vector>
+	"NeuralNetwork.h"
+
+1599410333 source:c:\projects\neuralnet\matrix.cpp
 	"Matrix.h"
 
-1599405011 source:c:\projects\neuralnet\matrix.cpp
-	"Matrix.h"
-
-1599405709 c:\projects\neuralnet\matrix.h
+1599411271 c:\projects\neuralnet\matrix.h
 	<stdio.h>
 	<fstream>
 	<iostream>
@@ -17,4 +17,10 @@
 	<vector>
 	<tuple>
 	<cmath>
+
+1599410188 source:c:\projects\neuralnet\neuralnetowrk.cpp
+	"NeuralNetwork.h"
+
+1599409371 c:\projects\neuralnet\neuralnetwork.h
+	"Matrix.h"
 

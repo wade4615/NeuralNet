@@ -15,42 +15,18 @@ vector<double>& Matrix::operator[](const unsigned &index){
     return m_matrix[index];
 }
 
-Matrix Matrix::operator+(Matrix &other){
-    Matrix sum(m_colSize, m_rowSize, 0.0);
-    for (auto i = 0; i < m_rowSize; i++) {
-        for (auto j = 0; j < m_colSize; j++) {
-            sum(i,j) = this->m_matrix[i][j] + other(i,j);
-        }
-    }
-    return sum;
-}
-
-Matrix Matrix::operator-(Matrix &other){
-    Matrix diff(m_colSize, m_rowSize, 0.0);
-    unsigned i,j;
-    for (i = 0; i < m_rowSize; i++) {
-        for (j = 0; j < m_colSize; j++) {
-            diff(i,j) = this->m_matrix[i][j] - other(i,j);
-        }
-    }
-    return diff;
-}
-
 Matrix Matrix::operator*(Matrix &other){
     Matrix multip(m_rowSize,other.getCols(),0.0);
     if(m_colSize == other.getRows()) {
         unsigned i,j,k;
         double temp = 0.0;
-        for (i = 0; i < m_rowSize; i++)
-        {
-            for (j = 0; j < other.getCols(); j++)
-            {
+        for (i = 0; i < m_rowSize; i++) {
+            for (j = 0; j < other.getCols(); j++) {
                 temp = 0.0;
-                for (k = 0; k < m_colSize; k++)
-                {
-                    temp += m_matrix[i][k] * other(k,j);
+                for (k = 0; k < m_colSize; k++) {
+                    temp += m_matrix[i][k] * other[k][j];
                 }
-                multip(i,j) = temp;
+                multip[i][j] = temp;
             }
         }
         return multip;
@@ -58,75 +34,31 @@ Matrix Matrix::operator*(Matrix &other){
     return *this;
 }
 
-Matrix Matrix::transpose(){
-    Matrix Transpose(m_colSize,m_rowSize,0.0);
-    for (unsigned i = 0; i < m_colSize; i++) {
-        for (unsigned j = 0; j < m_rowSize; j++) {
-            Transpose(i,j) = this->m_matrix[j][i];
+Array Matrix::operator*(Array &other){
+    Array c(other.getSize(),0.0);
+    if(m_colSize == other.getSize()) {
+        for(auto i=0; i<other.getSize(); i++) {
+            c[i] = 0;
+            for(auto j=0; j<m_rowSize; j++) {
+                c[i] += m_matrix[i][j] * other[j];
+            }
         }
     }
-    return Transpose;
+    return c;
 }
 
-Matrix Matrix::operator+(double scalar){
-    Matrix result(m_rowSize,m_colSize,0.0);
-    unsigned i,j;
-    for (i = 0; i < m_rowSize; i++) {
-        for (j = 0; j < m_colSize; j++) {
-            result(i,j) = this->m_matrix[i][j] + scalar;
+void Matrix::print() const {
+    cout << "Matrix:" << endl;
+    string delimiter = "";
+    for (auto i = 0; i < m_rowSize; i++) {
+        delimiter = "";
+        for (auto j = 0; j < m_colSize; j++) {
+            cout << delimiter << m_matrix[i][j];
+            delimiter = ",";
         }
-    }
-    return result;
-}
-
-Matrix Matrix::operator-(double scalar){
-    Matrix result(m_rowSize,m_colSize,0.0);
-    unsigned i,j;
-    for (i = 0; i < m_rowSize; i++) {
-        for (j = 0; j < m_colSize; j++) {
-            result(i,j) = this->m_matrix[i][j] - scalar;
-        }
-    }
-    return result;
-}
-
-Matrix Matrix::operator*(double scalar){
-    Matrix result(m_rowSize,m_colSize,0.0);
-    unsigned i,j;
-    for (i = 0; i < m_rowSize; i++) {
-        for (j = 0; j < m_colSize; j++) {
-            result(i,j) = this->m_matrix[i][j] * scalar;
-        }
-    }
-    return result;
-}
-
-Matrix Matrix::operator/(double scalar){
-    Matrix result(m_rowSize,m_colSize,0.0);
-    unsigned i,j;
-    for (i = 0; i < m_rowSize; i++) {
-        for (j = 0; j < m_colSize; j++) {
-            result(i,j) = this->m_matrix[i][j] / scalar;
-        }
-    }
-    return result;
-}
-
-double& Matrix::operator()(const unsigned &rowNo, const unsigned & colNo)
-{
-    return this->m_matrix[rowNo][colNo];
-}
-
-void Matrix::print() const{
-    cout << "Matrix: " << endl;
-    for (unsigned i = 0; i < m_rowSize; i++) {
-        for (unsigned j = 0; j < m_colSize; j++) {
-            cout << "[" << m_matrix[i][j] << "] ";
-        }
-        cout << endl;
+        cout << std::endl;
     }
 }
-
 unsigned Matrix::getRows() const{
     return m_rowSize;
 }
@@ -149,3 +81,18 @@ Array::~Array() {
 double& Array::operator[](const unsigned &index){
     return m_matrix[index];
 }
+
+void Array::print() const {
+    cout << "Array:" << endl;
+    string delimiter = "";
+    for (auto j = 0; j < m_size; j++) {
+        cout << delimiter << m_matrix[j];
+        delimiter = ",";
+    }
+    cout << endl;
+}
+
+unsigned Array::getSize() const {
+    return m_size;
+}
+

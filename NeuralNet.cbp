@@ -104,6 +104,8 @@
 		</Compiler>
 		<Unit filename="Matrix.cpp" />
 		<Unit filename="Matrix.h" />
+		<Unit filename="NeuralNetowrk.cpp" />
+		<Unit filename="NeuralNetwork.h" />
 		<Unit filename="main.cpp" />
 		<Extensions />
 	</Project>
