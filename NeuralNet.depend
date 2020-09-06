@@ -1,0 +1,20 @@
+# depslib dependency file v1.0
+1599334727 source:c:\projects\neuralnet\main.cpp
+	<iostream>
+	<vector>
+	"Matrix.h"
+
+1599334389 source:c:\projects\neuralnet\matrix.cpp
+	"Matrix.h"
+
+1599339316 c:\projects\neuralnet\matrix.h
+	<iostream>
+	<random>
+	<stdexcept>
+	<stdio.h>
+	<string.h>
+	<iostream>
+	<string>
+	<ctime>
+	<cstdlib>
+
