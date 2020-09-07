@@ -2,39 +2,40 @@
 #define MATRIX_H
 
 #include <iostream>
+#include <ctime>
+#include <cstdlib>
 
 using namespace std;
 
-typedef double ElementType;
-typedef double *ElementTypePtr;
+typedef unsigned IndexType;
 
 template <class T>
 class Array {
-        unsigned m_size;
+        IndexType m_size;
         T *m_matrix;
     public:
         Array(unsigned size);
         ~Array();
         Array operator-(Array &);
-        T& operator[](const unsigned &index);
+        T& operator[](const IndexType &index);
         void print() const;
-        unsigned getSize() const;
+        IndexType getSize() const;
 };
 
 template <class T>
 class Matrix {
-        unsigned m_rowSize;
-        unsigned m_colSize;
+        IndexType m_rowSize;
+        IndexType m_colSize;
         T **m_matrix;
     public:
-        Matrix(unsigned rowSize, unsigned colSize);
+        Matrix(IndexType rowSize, IndexType colSize, bool fill);
         ~Matrix();
         Matrix<T> operator*(Matrix<T> &);
         Array<T> operator*(Array<T> &);
-        T *& operator[](const unsigned &);
+        T *& operator[](const IndexType &);
         void print() const;
-        unsigned getRows() const;
-        unsigned getCols() const;
+        IndexType getRows() const;
+        IndexType getCols() const;
 };
 
 

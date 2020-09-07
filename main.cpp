@@ -4,14 +4,16 @@
 using namespace std;
 
 void test1(){
-    Matrix<double> input1(2,2);
+    srand( time(NULL) );
+
+    Matrix<double> input1(2,2, false);
     input1[0][0] = 1.0;
     input1[0][1] = 2.0;
     input1[1][0] = 3.0;
     input1[1][1] = 4.0;
     input1.print();
 
-    Matrix<double> input2(2,2);
+    Matrix<double> input2(2,2, false);
     input2[0][0] = 1.0;
     input2[0][1] = 2.0;
     input2[1][0] = 3.0;
@@ -33,7 +35,7 @@ void test1(){
     input4.print();
     cout << endl;
 
-    Matrix<double> input5(2,2);
+    Matrix<double> input5(2,2, false);
     input5[0][0] = 1.0;
     input5[0][1] = 2.0;
     input5[1][0] = 3.0;

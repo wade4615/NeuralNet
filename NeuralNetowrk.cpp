@@ -4,8 +4,8 @@ NeuralNetwork::NeuralNetwork(unsigned inputSize, unsigned middleSize, unsigned o
     inputLayer = new Array<double>(inputSize);
     middleLayer = new Array<double>(middleSize);
     outputLayer = new Array<double>(outputSize);
-    inputMiddleWeights = new Matrix<double>(inputSize, middleSize);
-    middleOutputWeights = new Matrix<double>(middleSize, outputSize);
+    inputMiddleWeights = new Matrix<double>(inputSize, middleSize, true);
+    middleOutputWeights = new Matrix<double>(middleSize, outputSize, true);
 }
 
 NeuralNetwork::~NeuralNetwork(){
