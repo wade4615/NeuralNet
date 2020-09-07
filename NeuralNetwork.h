@@ -4,11 +4,11 @@
 #include "Matrix.h"
 
 class NeuralNetwork {
-        Array *inputLayer;
-        Matrix *inputMiddleWeights;
-        Array *middleLayer;
-        Matrix *middleOutputWeights;
-        Array *outputLayer;
+        Array<double> *inputLayer;
+        Matrix<double> *inputMiddleWeights;
+        Array<double> *middleLayer;
+        Matrix<double> *middleOutputWeights;
+        Array<double> *outputLayer;
         unsigned inputSize;
         unsigned middleSize;
         unsigned outputSize;

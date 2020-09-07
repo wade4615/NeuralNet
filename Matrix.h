@@ -1,46 +1,41 @@
 #ifndef MATRIX_H
 #define MATRIX_H
 
-using namespace std;
-
-#include <stdio.h>
-#include <fstream> // for file access
 #include <iostream>
-#include <stdlib.h>
-#include <sstream>
-#include <string>
-#include <vector>
-#include <tuple>
-#include <cmath>
 
 using namespace std;
 
+typedef double ElementType;
+typedef double *ElementTypePtr;
+
+template <class T>
 class Array {
-    protected:
         unsigned m_size;
-        vector<double> m_matrix;
+        T *m_matrix;
     public:
-        Array(unsigned size, double initial);
+        Array(unsigned size);
         ~Array();
         Array operator-(Array &);
-        double& operator[](const unsigned &);
+        T& operator[](const unsigned &index);
         void print() const;
         unsigned getSize() const;
 };
 
+template <class T>
 class Matrix {
-    protected:
         unsigned m_rowSize;
         unsigned m_colSize;
-        vector<vector<double>> m_matrix;
+        T **m_matrix;
     public:
-        Matrix(unsigned rowSize, unsigned colSize, double initial);
+        Matrix(unsigned rowSize, unsigned colSize);
         ~Matrix();
-        Matrix operator*(Matrix &);
-        Array operator*(Array &);
-        vector<double>& operator[](const unsigned &);
+        Matrix<T> operator*(Matrix<T> &);
+        Array<T> operator*(Array<T> &);
+        T *& operator[](const unsigned &);
         void print() const;
         unsigned getRows() const;
         unsigned getCols() const;
 };
+
+
 #endif // MATRIX_H
