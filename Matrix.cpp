@@ -16,8 +16,21 @@ Matrix<T>::Matrix(unsigned rowSize, unsigned colSize, bool fill){
         m_matrix[i] = new T[colSize];
         if (fill){
             for (IndexType j = 0; j < colSize; j++) {
-                m_matrix[i][j] = fRand(0.0,1.0);
+                m_matrix[i][j] = fRand(0,1);
             }
+        }
+    }
+}
+
+template <class T>
+Matrix<T>::Matrix(initializer_list<initializer_list<T>> list){
+    this->m_rowSize = (int)list.size();
+    this->m_colSize = (int)(list.begin())->size();
+    m_matrix = new T *[m_rowSize];
+    for (IndexType i = 0; i < m_rowSize; i++) {
+        m_matrix[i] = new T[m_colSize];
+        for (IndexType j = 0; j < m_colSize; j++) {
+            m_matrix[i][j] = ((list.begin()+i)->begin())[j];
         }
     }
 }
@@ -57,7 +70,7 @@ Matrix<T> Matrix<T>::operator*(Matrix<T> &other){
 
 template <class T>
 Array<T> Matrix<T>::operator*(Array<T> &other){
-    Array<T> c(other.getSize());
+    Array<T> c(other.getSize(),false);
     if(m_colSize == other.getSize()) {
         for(IndexType i=0; i<other.getSize(); i++) {
             c[i] = 0;
@@ -70,8 +83,8 @@ Array<T> Matrix<T>::operator*(Array<T> &other){
 }
 
 template <class T>
-void Matrix<T>::print() const {
-    cout << "Matrix:" << endl;
+void Matrix<T>::print(char * text) const {
+    cout << text << endl;
     string delimiter = "";
     for (IndexType i = 0; i < m_rowSize; i++) {
         delimiter = "";
@@ -97,9 +110,14 @@ IndexType Matrix<T>::getCols() const{
 template class Array<double>;
 
 template <class T>
-Array<T>::Array(unsigned size){
+Array<T>::Array(IndexType size, bool fill){
     m_size = size;
     m_matrix = new T[m_size];
+    if (fill){
+        for (int i=0; i<m_size; i++) {
+            m_matrix[i] = fRand(0,1);
+        }
+    }
 }
 
 template <class T>
@@ -108,17 +126,21 @@ Array<T>::~Array() {
 }
 
 template <class T>
-T& Array<T>::operator[](const unsigned &index){
+T& Array<T>::operator[](const IndexType &index){
     return m_matrix[index];
 }
 
 template <class T>
-void Array<T>::print() const {
-    cout << "Array:" << endl;
+void Array<T>::print(char * text) const {
+    cout << text << endl;
     string delimiter = "";
-    for (unsigned j = 0; j < m_size; j++) {
-        cout << delimiter << m_matrix[j];
-        delimiter = ",";
+    if (m_size>0){
+        for (IndexType j = 0; j < m_size; j++) {
+            cout << delimiter << m_matrix[j];
+            delimiter = ",";
+        }
+    } else {
+        cout << "size=0" << endl;
     }
     cout << endl;
 }

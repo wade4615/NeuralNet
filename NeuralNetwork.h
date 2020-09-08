@@ -1,6 +1,10 @@
 #ifndef NEURALNETWORK_H_INCLUDED
 #define NEURALNETWORK_H_INCLUDED
 
+#include <iostream>
+#include <list>
+#include <cstdlib>
+#include <math.h>
 #include "Matrix.h"
 
 class NeuralNetwork {
@@ -9,12 +13,23 @@ class NeuralNetwork {
         Array<double> *middleLayer;
         Matrix<double> *middleOutputWeights;
         Array<double> *outputLayer;
-        unsigned inputSize;
-        unsigned middleSize;
-        unsigned outputSize;
+        IndexType inputSize;
+        IndexType middleSize;
+        IndexType outputSize;
+        IndexType numTrainingSets;
+        Array<double> *hiddenLayerBias;
+        Array<double> *outputLayerBias;
+        Matrix<double> *trainingInput;
+        Matrix<double> *trainingOutput;
+        Array<double> *deltaHidden;
+        Array<double> *deltaOutput;
     public:
         NeuralNetwork(unsigned inputSize, unsigned middleSize, unsigned outputSize);
         ~NeuralNetwork();
+        void loadTrainingData(Matrix<double> *input, Matrix<double> *output);
+        void train(IndexType epochs);
+        double sigmoid(double x);
+        double sigmoidDerivative(double x);
 };
 
 #endif // NEURALNETWORK_H_INCLUDED

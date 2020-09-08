@@ -1,19 +1,24 @@
 # depslib dependency file v1.0
-1599501630 source:c:\projects\neuralnet\main.cpp
+1599589151 source:c:\projects\neuralnet\main.cpp
 	<iostream>
 	"NeuralNetwork.h"
 
-1599501653 source:c:\projects\neuralnet\matrix.cpp
+1599588823 source:c:\projects\neuralnet\matrix.cpp
 	"Matrix.h"
 
-1599501581 c:\projects\neuralnet\matrix.h
+1599588861 c:\projects\neuralnet\matrix.h
 	<iostream>
-	<ctime>
+	<initializer_list>
 	<cstdlib>
+	<ctime>
 
-1599501678 source:c:\projects\neuralnet\neuralnetowrk.cpp
+1599589652 source:c:\projects\neuralnet\neuralnetowrk.cpp
 	"NeuralNetwork.h"
 
-1599439109 c:\projects\neuralnet\neuralnetwork.h
+1599586070 c:\projects\neuralnet\neuralnetwork.h
+	<iostream>
+	<list>
+	<cstdlib>
+	<math.h>
 	"Matrix.h"
 
