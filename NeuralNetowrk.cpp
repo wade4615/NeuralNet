@@ -14,16 +14,16 @@ void shuffle(int *array, size_t n) {
     }
 }
 
-NeuralNetwork::NeuralNetwork(unsigned inputSize, unsigned middleSize, unsigned outputSize):inputSize(inputSize),middleSize(middleSize),outputSize(outputSize){
-    inputLayer = new Array<double>(inputSize,false);
-    middleLayer = new Array<double>(middleSize,false);
-    outputLayer = new Array<double>(outputSize,false);
-    inputMiddleWeights = new Matrix<double>(inputSize, middleSize, true);
-    middleOutputWeights = new Matrix<double>(middleSize, outputSize, true);
-    hiddenLayerBias = new Array<double>(middleSize, true);
-    outputLayerBias = new Array<double>(outputSize, true);
-    deltaHidden = new Array<double>(middleSize,false);
-    deltaOutput = new Array<double>(outputSize,false);
+NeuralNetwork::NeuralNetwork(IndexType inputSize, IndexType middleSize, IndexType outputSize):inputSize(inputSize),middleSize(middleSize),outputSize(outputSize){
+    inputLayer = new Array<double>(inputSize,0);
+    middleLayer = new Array<double>(middleSize,0);
+    outputLayer = new Array<double>(outputSize,0);
+    inputMiddleWeights = new Matrix<double>(inputSize, middleSize, 0, 1);
+    middleOutputWeights = new Matrix<double>(middleSize, outputSize, 0, 1);
+    hiddenLayerBias = new Array<double>(middleSize, -1);
+    outputLayerBias = new Array<double>(outputSize, -1);
+    deltaHidden = new Array<double>(middleSize,0);
+    deltaOutput = new Array<double>(outputSize,0);
 }
 
 NeuralNetwork::~NeuralNetwork(){
@@ -54,43 +54,40 @@ double NeuralNetwork::sigmoidDerivative(double x) {
     return sigmoid(x)*(1-sigmoid(x));
 }
 
+void NeuralNetwork::forward(Array<double> *inLayer, Array<double> *outLayer, Matrix<double> *weights, Array<double> *bias, IndexType size1, IndexType size2){
+    for (int j=0; j<size1; j++) {
+        double activation=(*bias)[j];
+        for (int k=0; k<size2; k++) {
+            activation+=(*inLayer)[k]*(*weights)[k][j];
+        }
+        (*outLayer)[j] = sigmoid(activation);
+    }
+}
+
 void NeuralNetwork::train(IndexType epochs){
     int *trainingSetOrder = new int[numTrainingSets];
     for (int o=0; o < numTrainingSets; o++) {
         trainingSetOrder[o] = o;
     }
-    for (int n=0; n < epochs; n++) {
+    for (int n=1; n <= epochs; n++) {
         shuffle(trainingSetOrder,numTrainingSets);
         for (int x=0; x<numTrainingSets; x++) {
             int i = trainingSetOrder[x];
 
-            // Forward pass
-            for (int j=0; j<middleSize; j++) {
-                double activation=(*hiddenLayerBias)[j];
-                for (int k=0; k<inputSize; k++) {
-                    activation+=(*trainingInput)[i][k]*(*inputMiddleWeights)[k][j];
-                }
-                (*middleLayer)[j] = sigmoid(activation);
+            //send example to input layer
+            for (int z=0; z<inputSize; z++) {
+                (*inputLayer)[z]=(*trainingInput)[i][z];
             }
 
-            for (int j=0; j<outputSize; j++) {
-                double activation=(*outputLayerBias)[j];
-                for (int k=0; k<middleSize; k++) {
-                    activation+=(*middleLayer)[k]*(*middleOutputWeights)[k][j];
-                }
-                (*outputLayer)[j] = sigmoid(activation);
-            }
+            // Forward pass
+            forward(inputLayer,middleLayer,inputMiddleWeights,hiddenLayerBias,middleSize,inputSize);
+            forward(middleLayer,outputLayer,middleOutputWeights,outputLayerBias,outputSize,middleSize);
 
             // Backprop
-            double average = 0.0;
             for (int j=0; j<outputSize; j++) {
                 double errorOutput = ((*trainingOutput)[i][j]-(*outputLayer)[j]);
                 (*deltaOutput)[j] = errorOutput*sigmoidDerivative((*outputLayer)[j]);
-                average += (*deltaOutput)[j];
             }
-            average /= outputSize;
-            average *= 100;
-            cout << "error average =" << average << "%" << endl;
 
             for (int j=0; j<middleSize; j++) {
                 double errorHidden = 0.0f;
@@ -110,9 +107,23 @@ void NeuralNetwork::train(IndexType epochs){
             for (int j=0; j<middleSize; j++) {
                 (*hiddenLayerBias)[j] += (*deltaHidden)[j]*lr;
                 for(int k=0; k<inputSize; k++) {
-                    (*inputMiddleWeights)[k][j]+=(*trainingInput)[i][k]*(*deltaHidden)[j]*lr;
+                    (*inputMiddleWeights)[k][j]+=(*inputLayer)[k]*(*deltaHidden)[j]*lr;
                 }
             }
         }
+        if ((n%100)==0) cout << "Epoch : " << n <<endl;
     }
 }
+
+IndexType NeuralNetwork::getInputSize(){
+    return inputSize;
+}
+
+IndexType NeuralNetwork::getMiddleSize(){
+    return middleSize;
+}
+
+IndexType NeuralNetwork::getOutputSize(){
+    return outputSize;
+}
+

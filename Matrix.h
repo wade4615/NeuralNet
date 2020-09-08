@@ -15,9 +15,10 @@ double fRand(double fMin, double fMax);
 template <class T>
 class Array {
         IndexType m_size;
-        T *m_matrix;
+        T *m_list;
     public:
-        Array(IndexType size, bool fill);
+        Array(IndexType size, double low, double high);
+        Array(IndexType size, double value);
         ~Array();
         Array operator-(Array &);
         T& operator[](const IndexType &index);
@@ -31,11 +32,10 @@ class Matrix {
         IndexType m_colSize;
         T **m_matrix;
     public:
-        Matrix(IndexType rowSize, IndexType colSize, bool fill);
+        Matrix(IndexType rowSize, IndexType colSize, double low, double high);
+        Matrix(IndexType rowSize, IndexType colSize, double value);
         Matrix(initializer_list<initializer_list<T>> list);
         ~Matrix();
-        Matrix<T> operator*(Matrix<T> &);
-        Array<T> operator*(Array<T> &);
         T *& operator[](const IndexType &);
         void print(char * text) const;
         IndexType getRows() const;

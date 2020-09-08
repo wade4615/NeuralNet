@@ -8,16 +8,27 @@ double fRand(double fMin, double fMax){
 template class Matrix<double>;
 
 template <class T>
-Matrix<T>::Matrix(unsigned rowSize, unsigned colSize, bool fill){
+Matrix<T>::Matrix(unsigned rowSize, unsigned colSize, double low, double high){
     m_rowSize = rowSize;
     m_colSize = colSize;
     m_matrix = new T *[rowSize];
     for (IndexType i = 0; i < rowSize; i++) {
         m_matrix[i] = new T[colSize];
-        if (fill){
-            for (IndexType j = 0; j < colSize; j++) {
-                m_matrix[i][j] = fRand(0,1);
-            }
+        for (IndexType j = 0; j < colSize; j++) {
+            m_matrix[i][j] = fRand(low, high);
+        }
+    }
+}
+
+template <class T>
+Matrix<T>::Matrix(unsigned rowSize, unsigned colSize, double value){
+    m_rowSize = rowSize;
+    m_colSize = colSize;
+    m_matrix = new T *[rowSize];
+    for (IndexType i = 0; i < rowSize; i++) {
+        m_matrix[i] = new T[colSize];
+        for (IndexType j = 0; j < colSize; j++) {
+            m_matrix[i][j] = value;
         }
     }
 }
@@ -49,40 +60,6 @@ T *& Matrix<T>::operator[](const IndexType &index){
 }
 
 template <class T>
-Matrix<T> Matrix<T>::operator*(Matrix<T> &other){
-    Matrix<T> *multip = new Matrix<T>(m_rowSize,other.getCols(), false);
-    if(m_colSize == other.getRows()) {
-        IndexType i,j,k;
-        double temp = 0.0;
-        for (i = 0; i < m_rowSize; i++) {
-            for (j = 0; j < other.getCols(); j++) {
-                temp = 0.0;
-                for (k = 0; k < m_colSize; k++) {
-                    temp += m_matrix[i][k] * other[k][j];
-                }
-                (*multip)[i][j] = temp;
-            }
-        }
-        return *multip;
-    }
-    return *this;
-}
-
-template <class T>
-Array<T> Matrix<T>::operator*(Array<T> &other){
-    Array<T> c(other.getSize(),false);
-    if(m_colSize == other.getSize()) {
-        for(IndexType i=0; i<other.getSize(); i++) {
-            c[i] = 0;
-            for(IndexType j=0; j<m_rowSize; j++) {
-                c[i] += m_matrix[i][j] * other[j];
-            }
-        }
-    }
-    return c;
-}
-
-template <class T>
 void Matrix<T>::print(char * text) const {
     cout << text << endl;
     string delimiter = "";
@@ -110,24 +87,31 @@ IndexType Matrix<T>::getCols() const{
 template class Array<double>;
 
 template <class T>
-Array<T>::Array(IndexType size, bool fill){
+Array<T>::Array(IndexType size, double low, double high){
     m_size = size;
-    m_matrix = new T[m_size];
-    if (fill){
-        for (int i=0; i<m_size; i++) {
-            m_matrix[i] = fRand(0,1);
-        }
+    m_list = new T[m_size];
+    for (int i=0; i<m_size; i++) {
+        m_list[i] = fRand(low, high);
+    }
+}
+
+template <class T>
+Array<T>::Array(IndexType size, double value){
+    m_size = size;
+    m_list = new T[m_size];
+    for (int i=0; i<m_size; i++) {
+        m_list[i] = value;
     }
 }
 
 template <class T>
 Array<T>::~Array() {
-    delete[] m_matrix;
+    delete[] m_list;
 }
 
 template <class T>
 T& Array<T>::operator[](const IndexType &index){
-    return m_matrix[index];
+    return m_list[index];
 }
 
 template <class T>
@@ -136,7 +120,7 @@ void Array<T>::print(char * text) const {
     string delimiter = "";
     if (m_size>0){
         for (IndexType j = 0; j < m_size; j++) {
-            cout << delimiter << m_matrix[j];
+            cout << delimiter << m_list[j];
             delimiter = ",";
         }
     } else {

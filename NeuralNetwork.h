@@ -24,12 +24,16 @@ class NeuralNetwork {
         Array<double> *deltaHidden;
         Array<double> *deltaOutput;
     public:
-        NeuralNetwork(unsigned inputSize, unsigned middleSize, unsigned outputSize);
+        NeuralNetwork(IndexType inputSize, IndexType middleSize, IndexType outputSize);
         ~NeuralNetwork();
+        void forward(Array<double> *inLayer, Array<double> *outLayer, Matrix<double> *weights, Array<double> *bias, IndexType size1, IndexType size2);
         void loadTrainingData(Matrix<double> *input, Matrix<double> *output);
         void train(IndexType epochs);
         double sigmoid(double x);
         double sigmoidDerivative(double x);
+        IndexType getInputSize();
+        IndexType getMiddleSize();
+        IndexType getOutputSize();
 };
 
 #endif // NEURALNETWORK_H_INCLUDED
