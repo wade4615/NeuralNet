@@ -51,11 +51,10 @@ double NeuralNetwork::sigmoid(double x) {
 }
 
 double NeuralNetwork::sigmoidDerivative(double x) {
-    return x*(1-x);
+    return sigmoid(x)*(1-sigmoid(x));
 }
 
 void NeuralNetwork::train(IndexType epochs){
-    cout << "examples=" << numTrainingSets << endl;
     int *trainingSetOrder = new int[numTrainingSets];
     for (int o=0; o < numTrainingSets; o++) {
         trainingSetOrder[o] = o;
