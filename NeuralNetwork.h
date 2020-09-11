@@ -5,6 +5,9 @@
 #include <list>
 #include <cstdlib>
 #include <math.h>
+#include <iomanip>
+#include <cmath>
+#include <limits>
 #include "Matrix.h"
 
 class NeuralNetwork {
@@ -26,14 +29,19 @@ class NeuralNetwork {
     public:
         NeuralNetwork(IndexType inputSize, IndexType middleSize, IndexType outputSize);
         ~NeuralNetwork();
-        void forward(Array<double> *inLayer, Array<double> *outLayer, Matrix<double> *weights, Array<double> *bias, IndexType size1, IndexType size2);
         void loadTrainingData(Matrix<double> *input, Matrix<double> *output);
         void train(IndexType epochs);
-        double sigmoid(double x);
-        double sigmoidDerivative(double x);
         IndexType getInputSize();
         IndexType getMiddleSize();
         IndexType getOutputSize();
+    private:
+        void shuffle(int *array, size_t n);
+        void forwardPropagate(Array<double> *inLayer, Array<double> *outLayer, Matrix<double> *weights, Array<double> *bias, IndexType size1, IndexType size2);
+        void backPropagate(Array<double> *layer,Matrix<double> *weights,Array<double> *delta,Array<double> *bias,IndexType size1,IndexType size2);
+        double computeOutputError(int epoch,int trainingExample,Matrix<double> *expectedOutput,Array<double> *layer, IndexType size1);
+        double sigmoid(double x);
+        double sigmoidDerivative(double x);
+
 };
 
 #endif // NEURALNETWORK_H_INCLUDED

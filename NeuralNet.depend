@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1599596590 source:c:\projects\neuralnet\main.cpp
+1599835809 source:c:\projects\neuralnet\main.cpp
 	<iostream>
 	"NeuralNetwork.h"
 
@@ -12,13 +12,16 @@
 	<cstdlib>
 	<ctime>
 
-1599596494 source:c:\projects\neuralnet\neuralnetowrk.cpp
+1599838629 source:c:\projects\neuralnet\neuralnetowrk.cpp
 	"NeuralNetwork.h"
 
-1599597322 c:\projects\neuralnet\neuralnetwork.h
+1599834755 c:\projects\neuralnet\neuralnetwork.h
 	<iostream>
 	<list>
 	<cstdlib>
 	<math.h>
+	<iomanip>
+	<cmath>
+	<limits>
 	"Matrix.h"
 
