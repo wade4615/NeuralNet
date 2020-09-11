@@ -9,7 +9,7 @@ int main(){
     Matrix<double> trainingOutput = {{0.0},{0.0},{0.0},{1.0}};
     NeuralNetwork net(2,4,1);
     net.loadTrainingData(&trainingInput,&trainingOutput);
-    net.train(1);
+    net.train(10000);
     cout << "Number of input neurons  : " << net.getInputSize() << endl;
     cout << "Number of hidden neurons : " << net.getMiddleSize() << endl;
     cout << "Number of output neurons : " << net.getOutputSize() << endl;

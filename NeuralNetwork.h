@@ -36,9 +36,6 @@ class NeuralNetwork {
         IndexType getOutputSize();
     private:
         void shuffle(int *array, size_t n);
-        void forwardPropagate(Array<double> *inLayer, Array<double> *outLayer, Matrix<double> *weights, Array<double> *bias, IndexType size1, IndexType size2);
-        void backPropagate(Array<double> *layer,Matrix<double> *weights,Array<double> *delta,Array<double> *bias,IndexType size1,IndexType size2);
-        double computeOutputError(int epoch,int trainingExample,Matrix<double> *expectedOutput,Array<double> *layer, IndexType size1);
         double sigmoid(double x);
         double sigmoidDerivative(double x);
 

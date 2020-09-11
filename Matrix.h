@@ -14,15 +14,15 @@ double fRand(double fMin, double fMax);
 
 template <class T>
 class Array {
-        IndexType m_size;
-        T *m_list;
+        IndexType m_numberOfElements;
+        T *elements;
     public:
-        Array(IndexType size, double low, double high);
-        Array(IndexType size, double value);
+        Array(IndexType numberOfElements, double low, double high);
+        Array(IndexType numberOfElements, double value);
         ~Array();
         Array operator-(Array &);
         T& operator[](const IndexType &index);
-        void print(char * text) const;
+        void print(char *text) const;
         IndexType getSize() const;
 };
 
@@ -30,7 +30,7 @@ template <class T>
 class Matrix {
         IndexType m_rowSize;
         IndexType m_colSize;
-        T **m_matrix;
+        T **elements;
     public:
         Matrix(IndexType rowSize, IndexType colSize, double low, double high);
         Matrix(IndexType rowSize, IndexType colSize, double value);

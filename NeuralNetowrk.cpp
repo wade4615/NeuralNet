@@ -54,37 +54,6 @@ double NeuralNetwork::sigmoidDerivative(double x) {
     return sigmoid(x)*(1-sigmoid(x));
 }
 
-void NeuralNetwork::forwardPropagate(Array<double> *inLayer, Array<double> *outLayer, Matrix<double> *weights, Array<double> *bias, IndexType size1, IndexType size2){
-    for (int j=0; j<size1; j++) {
-        double activation=(*bias)[j];
-        for (int k=0; k<size2; k++) {
-            activation+=(*inLayer)[k]*(*weights)[k][j];
-        }
-        (*outLayer)[j] = sigmoid(activation);
-    }
-}
-
-
-void NeuralNetwork::backPropagate(Array<double> *layer,Matrix<double> *weights,Array<double> *delta,Array<double> *bias,IndexType size1,IndexType size2){
-    for (int j=0; j<size1; j++) {
-        (*bias)[j] += (*delta)[j]*lr;
-        for (int k=0; k<size2; k++) {
-            (*weights)[k][j]+=(*layer)[k]*(*delta)[j]*lr;
-        }
-    }
-}
-
-double NeuralNetwork::computeOutputError(int epoch,int trainingExample,Matrix<double> *expectedOutput,Array<double> *layer, IndexType size1){
-    double error1 = 0.0;
-    for (int j=0; j<size1; j++) {
-        double errorOutput = ((*expectedOutput)[trainingExample][j]-(*layer)[j]);
-        error1 += errorOutput / (*expectedOutput)[trainingExample][j];
-        (*deltaOutput)[j] = errorOutput*sigmoidDerivative((*layer)[j]);
-    }
-    double average = error1 / (double) size1;
-    return average;
-}
-
 void NeuralNetwork::train(IndexType epochs){
     cout << "examples=" << numTrainingSets << endl;
     int *trainingSetOrder = new int[numTrainingSets];
@@ -96,9 +65,9 @@ void NeuralNetwork::train(IndexType epochs){
         for (int x=0; x<numTrainingSets; x++) {
             int i = trainingSetOrder[x];
 
-            cout << "epoch : " << n << endl;
-            trainingInput->print("training input");
-            trainingOutput->print("training output");
+            //cout << "epoch : " << n << endl;
+            //trainingInput->print("training input");
+            //trainingOutput->print("training output");
 
             // Forward pass
             for (int j=0; j<middleSize; j++) {
@@ -108,7 +77,7 @@ void NeuralNetwork::train(IndexType epochs){
                 }
                 (*middleLayer)[j] = sigmoid(activation);
             }
-            middleLayer->print("middle layer");
+            //middleLayer->print("middle layer");
 
             for (int j=0; j<outputSize; j++) {
                 double activation=(*outputLayerBias)[j];
@@ -117,18 +86,16 @@ void NeuralNetwork::train(IndexType epochs){
                 }
                 (*outputLayer)[j] = sigmoid(activation);
             }
-            outputLayer->print("output layer");
+            //outputLayer->print("output layer");
 
             // Backprop
-            double average = 0.0;
+            double netError = 0.0;
             for (int j=0; j<outputSize; j++) {
                 double errorOutput = ((*trainingOutput)[i][j]-(*outputLayer)[j]);
                 (*deltaOutput)[j] = errorOutput*sigmoidDerivative((*outputLayer)[j]);
-                average += errorOutput / (*trainingOutput)[i][j];
+                netError += 0.5 * pow(errorOutput,2);
             }
-            average /= outputSize;
-            average *= 100;
-            cout << "error average = " << setprecision(4) << average << "%" << endl;
+            if ((n%1000)==0) cout << "network error = " << fixed << setprecision(12) << netError << endl;
 
             for (int j=0; j<middleSize; j++) {
                 double errorHidden = 0.0f;
@@ -151,7 +118,7 @@ void NeuralNetwork::train(IndexType epochs){
                     (*inputMiddleWeights)[k][j]+=(*trainingInput)[i][k]*(*deltaHidden)[j]*lr;
                 }
             }
-            cout << "-----------------------------------------------------------" << endl;
+            //cout << "-----------------------------------------------------------" << endl;
         }
     }
 }
