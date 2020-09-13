@@ -118,7 +118,6 @@ void NeuralNetwork::train(IndexType epochs){
                     (*inputMiddleWeights)[k][j]+=(*trainingInput)[i][k]*(*deltaHidden)[j]*lr;
                 }
             }
-            //cout << "-----------------------------------------------------------" << endl;
         }
     }
 }
