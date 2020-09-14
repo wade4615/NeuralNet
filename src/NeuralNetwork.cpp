@@ -20,7 +20,7 @@ void NeuralNetwork::shuffle(int *array, size_t n) {
     }
 }
 
-NeuralNetwork::NeuralNetwork(IndexType inputSize, IndexType middleSize, IndexType outputSize) : inputSize(inputSize), middleSize(middleSize), outputSize(outputSize) {
+NeuralNetwork::NeuralNetwork(IndexType inputSize, IndexType middleSize, IndexType outputSize) : inputSize(inputSize), middleSize(middleSize), outputSize(outputSize),numTrainingSets(0) {
     inputLayer = new Array<double>(inputSize, 0);
     middleLayer = new Array<double>(middleSize, 0);
     outputLayer = new Array<double>(outputSize, 0);
@@ -30,6 +30,8 @@ NeuralNetwork::NeuralNetwork(IndexType inputSize, IndexType middleSize, IndexTyp
     outputLayerBias = new Array<double>(outputSize, -1);
     deltaHidden = new Array<double>(middleSize, 0);
     deltaOutput = new Array<double>(outputSize, 0);
+    trainingInput = NULL;
+    trainingOutput = NULL;
 }
 
 NeuralNetwork::~NeuralNetwork() {
@@ -75,6 +77,7 @@ Array<double>& NeuralNetwork::sigmoidDerivative(Array<double> *layerIn) {
     for (auto j = 0; j < layerIn->getSize(); j++) {
         (*layerOut)[j] = sigmoidDerivative((*layerIn)[j]);
     }
+    return *layerOut;
 }
 
 void NeuralNetwork::train(IndexType epochs) {
