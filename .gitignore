@@ -1,1 +1,3 @@
-obj/
+Debug32/
+Debug64/
+Release32/
