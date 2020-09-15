@@ -8,7 +8,10 @@
 
 const double lr = 0.1f;
 
-void NeuralNetwork::shuffle(int *array, size_t n) {
+template class NeuralNetwork<double>;
+
+template<class T>
+void NeuralNetwork<T>::shuffle(int *array, size_t n) {
     if (n > 1) {
         size_t i;
         for (i = 0; i < n - 1; i++) {
@@ -20,21 +23,23 @@ void NeuralNetwork::shuffle(int *array, size_t n) {
     }
 }
 
-NeuralNetwork::NeuralNetwork(IndexType inputSize, IndexType middleSize, IndexType outputSize) : inputSize(inputSize), middleSize(middleSize), outputSize(outputSize),numTrainingSets(0) {
-    inputLayer = new Array<double>(inputSize, 0);
-    middleLayer = new Array<double>(middleSize, 0);
-    outputLayer = new Array<double>(outputSize, 0);
-    inputMiddleWeights = new Matrix<double>(inputSize, middleSize, 0, 1);
-    middleOutputWeights = new Matrix<double>(middleSize, outputSize, 0, 1);
-    hiddenLayerBias = new Array<double>(middleSize, -1);
-    outputLayerBias = new Array<double>(outputSize, -1);
-    deltaHidden = new Array<double>(middleSize, 0);
-    deltaOutput = new Array<double>(outputSize, 0);
+template<class T>
+NeuralNetwork<T>::NeuralNetwork(IndexType inputSize, IndexType middleSize, IndexType outputSize) : inputSize(inputSize), middleSize(middleSize), outputSize(outputSize),numTrainingSets(0) {
+    inputLayer = new Array<T>(inputSize, 0);
+    middleLayer = new Array<T>(middleSize, 0);
+    outputLayer = new Array<T>(outputSize, 0);
+    inputMiddleWeights = new Matrix<T>(inputSize, middleSize, 0, 1);
+    middleOutputWeights = new Matrix<T>(middleSize, outputSize, 0, 1);
+    hiddenLayerBias = new Array<T>(middleSize, -1);
+    outputLayerBias = new Array<T>(outputSize, -1);
+    deltaHidden = new Array<T>(middleSize, 0);
+    deltaOutput = new Array<T>(outputSize, 0);
     trainingInput = NULL;
     trainingOutput = NULL;
 }
 
-NeuralNetwork::~NeuralNetwork() {
+template<class T>
+NeuralNetwork<T>::~NeuralNetwork() {
     delete[] inputLayer;
     delete[] middleLayer;
     delete[] outputLayer;
@@ -50,37 +55,43 @@ NeuralNetwork::~NeuralNetwork() {
     delete[] deltaOutput;
 }
 
-void NeuralNetwork::loadTrainingData(Matrix<double> *input, Matrix<double> *output) {
+template<class T>
+void NeuralNetwork<T>::loadTrainingData(Matrix<T> *input, Matrix<T> *output) {
     numTrainingSets = input->getRows();
     trainingInput = input;
     trainingOutput = output;
 }
 
-double NeuralNetwork::sigmoid(double x) {
+template<class T>
+double NeuralNetwork<T>::sigmoid(T x) {
     return 1 / (1 + exp(-x));
 }
 
-Array<double>& NeuralNetwork::sigmoid(Array<double> *layerIn) {
-    Array<double> *layerOut = new Array<double>(layerIn->getSize(), 0.0);
-    for (auto j = 0; j < layerIn->getSize(); j++) {
-        (*layerOut)[j] = sigmoid((*layerIn)[j]);
+template<class T>
+Array<double>& NeuralNetwork<T>::sigmoid(Array<T>& layerIn) {
+    Array<T> layerOut(layerIn);
+    for (auto j = 0; j < layerIn.getRows(); j++) {
+        layerOut[j] = sigmoid(layerIn[j]);
     }
-    return *layerOut;
+    return layerOut;
 }
 
-double NeuralNetwork::sigmoidDerivative(double x) {
+template<class T>
+double NeuralNetwork<T>::sigmoidDerivative(T x) {
     return sigmoid(x) * (1 - sigmoid(x));
 }
 
-Array<double>& NeuralNetwork::sigmoidDerivative(Array<double> *layerIn) {
-    Array<double> *layerOut = new Array<double>(layerIn->getSize(), 0.0);
-    for (auto j = 0; j < layerIn->getSize(); j++) {
-        (*layerOut)[j] = sigmoidDerivative((*layerIn)[j]);
+template<class T>
+Array<double>& NeuralNetwork<T>::sigmoidDerivative(Array<T>& layerIn) {
+    Array<double> layerOut(layerIn);
+    for (auto j = 0; j < layerIn.getRows(); j++) {
+        layerOut[j] = sigmoidDerivative(layerIn[j]);
     }
-    return *layerOut;
+    return layerOut;
 }
 
-void NeuralNetwork::train(IndexType epochs) {
+template<class T>
+void NeuralNetwork<T>::train(IndexType epochs) {
     cout << "examples=" << numTrainingSets << endl;
     int *trainingSetOrder = new int[numTrainingSets];
     for (int o = 0; o < numTrainingSets; o++) {
@@ -104,13 +115,13 @@ void NeuralNetwork::train(IndexType epochs) {
             }
 
             middleLayer->setBias(hiddenLayerBias);
-            (*middleLayer) = (*inputLayer) * (*inputMiddleWeights);
-            (*middleLayer) = sigmoid(middleLayer);
+            (*middleLayer) = (*inputMiddleWeights) * (*inputLayer);
+            (*middleLayer) = sigmoid(*middleLayer);
             middleLayer->print("middle layer");
 
             outputLayer->setBias(outputLayerBias);
-            (*outputLayer) = (*middleLayer) * (*middleOutputWeights);
-            (*outputLayer) = sigmoid(outputLayer);
+            (*outputLayer) = (*middleOutputWeights) * (*middleLayer);
+            (*outputLayer) = sigmoid(*outputLayer);
             outputLayer->print("output layer");
 
             // Backprop
@@ -153,15 +164,18 @@ void NeuralNetwork::train(IndexType epochs) {
     }
 }
 
-IndexType NeuralNetwork::getInputSize() {
+template<class T>
+IndexType NeuralNetwork<T>::getInputSize() {
     return inputSize;
 }
 
-IndexType NeuralNetwork::getMiddleSize() {
+template<class T>
+IndexType NeuralNetwork<T>::getMiddleSize() {
     return middleSize;
 }
 
-IndexType NeuralNetwork::getOutputSize() {
+template<class T>
+IndexType NeuralNetwork<T>::getOutputSize() {
     return outputSize;
 }
 

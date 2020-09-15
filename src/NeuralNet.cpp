@@ -7,13 +7,14 @@
 //============================================================================
 #include <iostream>
 #include "NeuralNetwork.h"
+#include "Matrix.h"
 
 using namespace std;
 
 void networkTest() {
     Matrix<double> trainingInput = { { 0.0, 0.0 }, { 0.0, 1.0 }, { 1.0, 0.0 }, { 1.0, 1.0 } };
     Matrix<double> trainingOutput = { { 0.0 }, { 0.0 }, { 0.0 }, { 1.0 } };
-    NeuralNetwork net(2, 2, 1);
+    NeuralNetwork<double> net(2, 2, 1);
     net.loadTrainingData(&trainingInput, &trainingOutput);
     net.train(1);
     cout << "Number of input neurons  : " << net.getInputSize() << endl;
@@ -29,8 +30,6 @@ void matrixArrayTest() {
 
     Array<double> array2 = matrix1 * array1;
     array2.print("Array2");
-    Array<double> array3 = array1 * matrix1;
-    array2.print("Array3");
 }
 
 int main() {
