@@ -27,13 +27,16 @@ class Matrix {
         IndexType m_rowSize;
         IndexType m_colSize;
         T **elements;
+        Array<T,O> *bias;
     public:
         Matrix(){
+            bias = NULL;
             m_rowSize = 0;
             m_colSize = 0;
             elements = NULL;
         }
         Matrix(double low, double high){
+            bias = NULL;
             m_rowSize = N;
             m_colSize = O;
             elements = new T *[m_rowSize];
@@ -45,6 +48,7 @@ class Matrix {
             }
         }
         Matrix(double value){
+            bias = NULL;
             m_rowSize = N;
             m_colSize = O;
             elements = new T *[m_rowSize];
@@ -56,6 +60,7 @@ class Matrix {
             }
         }
         Matrix(initializer_list<initializer_list<T>> list){
+            bias = NULL;
         	m_rowSize = (int) list.size();
         	m_colSize = (int) (list.begin())->size();
         	elements = new T *[m_rowSize];
@@ -91,16 +96,20 @@ class Matrix {
 		    Array<T,N> *temp = new Array<T,N>(0.0);
 		    for (auto i = 0; i < other.getRows(); i++) {
 		        double acumulate = 0;
-//		        if (bias == NULL)
-//		            acumulate = 0;
-//		        else
-//		            acumulate = (*bias)[i];
+		        if (bias == NULL)
+		            acumulate = 0;
+		        else
+		            acumulate = (*bias)[i];
 		        for (auto j = 0; j < this->m_rowSize; j++) {
 		            acumulate += this->elements[i][j] * other[j];
 		        }
 		        (*temp)[i] += acumulate;
 		    }
 		    return *temp;
+		}
+
+		void setBias(Array<T,N> *other) {
+		    bias = other;
 		}
 };
 #endif /* MATRIX_H_ */

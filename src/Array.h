@@ -33,7 +33,6 @@ class Array : public Matrix<T, N, 1> {
 		T& operator[](const IndexType &index) {
 		   return this->elements[index][0];
 		}
-
 };
 
 #endif /* ARRAY_H_ */
