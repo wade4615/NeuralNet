@@ -12,6 +12,7 @@
 #include <initializer_list>
 #include <cstdlib>
 #include <ctime>
+#include "Array.h"
 
 using namespace std;
 
@@ -19,97 +20,22 @@ typedef unsigned IndexType;
 
 double fRand(double fMin, double fMax);
 
-template<class T, IndexType N> class Array;
-
-template<class T, IndexType N, IndexType O>
 class Matrix {
-    protected:
-        IndexType m_rowSize;
-        IndexType m_colSize;
-        T **elements;
-        Array<T,O> *bias;
-    public:
-        Matrix(){
-            bias = NULL;
-            m_rowSize = 0;
-            m_colSize = 0;
-            elements = NULL;
-        }
-        Matrix(double low, double high){
-            bias = NULL;
-            m_rowSize = N;
-            m_colSize = O;
-            elements = new T *[m_rowSize];
-            for (auto i = 0; i < m_rowSize; i++) {
-                elements[i] = new T[m_colSize];
-                for (auto j = 0; j < m_colSize; j++) {
-                    elements[i][j] = fRand(low, high);
-                }
-            }
-        }
-        Matrix(double value){
-            bias = NULL;
-            m_rowSize = N;
-            m_colSize = O;
-            elements = new T *[m_rowSize];
-            for (auto i = 0; i < m_rowSize; i++) {
-                elements[i] = new T[m_colSize];
-                for (auto j = 0; j < m_colSize; j++) {
-                    elements[i][j] = value;
-                }
-            }
-        }
-        Matrix(initializer_list<initializer_list<T>> list){
-            bias = NULL;
-        	m_rowSize = (int) list.size();
-        	m_colSize = (int) (list.begin())->size();
-        	elements = new T *[m_rowSize];
-        	for (auto i = 0; i < m_rowSize; i++) {
-        		elements[i] = new T[m_colSize];
-        		for (auto j = 0; j < m_colSize; j++) {
-        			elements[i][j] = ((list.begin() + i)->begin())[j];
-        		}
-        	}
-        }
-        T *& operator[](const IndexType& index){
-            return elements[index];
-        }
-        IndexType getRows() const{
-            return m_rowSize;
-        }
-        IndexType getCols() const{
-            return m_colSize;
-        }
-        void print(char *text) const{
-            cout << text << endl;
-            string delimiter = "";
-            for (auto i = 0; i < m_rowSize; i++) {
-                delimiter = "";
-                for (auto j = 0; j < m_colSize; j++) {
-                    cout << delimiter << elements[i][j];
-                    delimiter = ",";
-                }
-                cout << std::endl;
-            }
-        }
-		Array<T,N> operator*(Array<T,N> &other) {
-		    Array<T,N> *temp = new Array<T,N>(0.0);
-		    for (auto i = 0; i < other.getRows(); i++) {
-		        double acumulate = 0;
-		        if (bias == NULL)
-		            acumulate = 0;
-		        else
-		            acumulate = (*bias)[i];
-		        for (auto j = 0; j < this->m_rowSize; j++) {
-		            acumulate += this->elements[i][j] * other[j];
-		        }
-		        (*temp)[i] += acumulate;
-		    }
-		    return *temp;
-		}
-
-		void setBias(Array<T,N> *other) {
-		    bias = other;
-		}
+	IndexType m_rowSize;
+	IndexType m_colSize;
+	double **m_matrix;
+	Array *bias;
+public:
+	Matrix(IndexType rowSize, IndexType colSize, double low, double high);
+	Matrix(IndexType rowSize, IndexType colSize, double value);
+	Matrix(initializer_list<initializer_list<double>> list);
+	virtual ~Matrix();
+	Matrix operator*(Matrix &other);
+	Array& operator*(Array &other);
+	double*& operator[](const IndexType &index);
+	void print(char *text) const;
+	IndexType getRows() const;
+	IndexType getCols() const;
+	void setBias(Array *other);
 };
 #endif /* MATRIX_H_ */

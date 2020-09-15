@@ -18,77 +18,37 @@
 #include "Matrix.h"
 #include "Array.h"
 
-template<class T, IndexType I, IndexType M, IndexType O, IndexType S>
-class NeuralNetwork {
-        Array<T,I> inputLayer;
-        Matrix<T,I,M>  inputMiddleWeights;
-        Array<T,M>   middleLayer;
-        Matrix<T,M,O>  middleOutputWeights;
-        Array<T,O>   outputLayer;
-        IndexType  inputSize;
-        IndexType  middleSize;
-        IndexType  outputSize;
-        IndexType  numTrainingSets;
-        Array<T,M>   hiddenLayerBias;
-        Array<T,O>   outputLayerBias;
-        Matrix<T,I,S>  trainingInput;
-        Matrix<T,O,S>  trainingOutput;
-        Array<T,M>   deltaHidden;
-        Array<T,O>   deltaOutput;
-    public:
-        NeuralNetwork() {
-        	 inputSize = I;
-        	 middleSize = M;
-        	 outputSize = O;
-        	 numTrainingSets = S;
-        }
-        ~NeuralNetwork() {
-        }
-        void shuffle(int *array, IndexType n) {
-            if (n > 1) {
-                size_t i;
-                for (i = 0; i < n - 1; i++) {
-                    size_t j = i + rand() / (RAND_MAX / (n - i) + 1);
-                    int t = array[j];
-                    array[j] = array[i];
-                    array[i] = t;
-                }
-            }
-        }
-        void loadTrainingData(Matrix<T,I,S>& input, Matrix<T,O,S>& output) {
-            numTrainingSets = S;
-            trainingInput = input;
-            trainingOutput = output;
-        }
-        double sigmoid(T x) {
-            return 1 / (1 + exp(-x));
-        }
-        double sigmoidDerivative(T x) {
-            return sigmoid(x) * (1 - sigmoid(x));
-        }
-        Array<T,I>& sigmoid(Array<T,I>& layerIn) {
-            Array<T,I> layerOut(layerIn);
-            for (auto j = 0; j < layerIn.getRows(); j++) {
-                layerOut[j] = sigmoid(layerIn[j]);
-            }
-            return layerOut;
-        }
-        Array<T,I>& sigmoidDerivative(Array<T,I>& layerIn) {
-            Array<T,I> layerOut(layerIn);
-            for (auto j = 0; j < layerIn.getRows(); j++) {
-                layerOut[j] = sigmoidDerivative(layerIn[j]);
-            }
-            return layerOut;
-        }
-        IndexType getInputSize() {
-            return inputSize;
-        }
-        IndexType getMiddleSize() {
-            return middleSize;
-        }
-        IndexType getOutputSize() {
-            return outputSize;
-        }
+const double lr = 0.1f;
 
+class NeuralNetwork {
+	Array inputLayer;
+	Matrix inputMiddleWeights;
+	Array middleLayer;
+	Matrix middleOutputWeights;
+	Array outputLayer;
+	Array hiddenLayerBias;
+	Array outputLayerBias;
+	Matrix trainingInput;
+	Matrix trainingOutput;
+	Array deltaHidden;
+	Array deltaOutput;
+	IndexType inputSize;
+	IndexType middleSize;
+	IndexType outputSize;
+	IndexType numTrainingSets;
+public:
+	NeuralNetwork(IndexType inputSize, IndexType middleSize,
+			IndexType outputSize, IndexType exampleSize);
+	virtual ~NeuralNetwork();
+	void shuffle(int *array, IndexType n);
+	void loadTrainingData(Matrix &input, Matrix &output);
+	double sigmoid(double x);
+	double sigmoidDerivative(double x);
+	Array& sigmoid(Array &layerIn);
+	Array& sigmoidDerivative(Array &layerIn);
+	IndexType getInputSize();
+	IndexType getMiddleSize();
+	IndexType getOutputSize();
+	void train(IndexType epochs);
 };
 #endif /* NEURALNETWORK_H_ */
