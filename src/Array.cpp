@@ -7,6 +7,11 @@
 //============================================================================
 #include "Array.h"
 
+Array::Array() {
+	m_size = 0;
+	m_matrix = NULL;
+}
+
 Array::Array(unsigned size, double low, double high) {
 	m_size = size;
 	m_matrix = new double[m_size];
@@ -24,7 +29,7 @@ Array::Array(unsigned size, double value) {
 }
 
 Array::~Array() {
-	delete[] m_matrix;
+	if (!m_matrix) delete[] m_matrix;
 }
 
 Array::Array(initializer_list<double> list) {
@@ -37,8 +42,40 @@ Array::Array(initializer_list<double> list) {
 	}
 }
 
+void Array::setup(unsigned size, double low, double high) {
+	m_size = size;
+	m_matrix = new double[m_size];
+	for (auto i = 0; i < m_size; i++) {
+		m_matrix[i] = fRand(low, high);
+	}
+}
+
+void Array::setup(unsigned size, double value) {
+	m_size = size;
+	m_matrix = new double[m_size];
+	for (auto i = 0; i < m_size; i++) {
+		m_matrix[i] = value;
+	}
+}
+
 double& Array::operator[](const IndexType &index) {
 	return m_matrix[index];
+}
+
+Array operator -(Array lhs, Array rhs) {
+    Array temp(rhs.getSize(),0);
+	for(auto i=0; i<rhs.getSize(); i++) {
+		temp[i] = lhs[i] - rhs[i];
+	}
+    return temp;
+}
+
+Array operator *(Array lhs, Array rhs) {
+    Array temp(rhs.getSize(),0);
+	for(auto i=0; i<rhs.getSize(); i++) {
+		temp[i] = lhs[i] * rhs[i];
+	}
+    return temp;
 }
 
 void Array::print(char *text) const {

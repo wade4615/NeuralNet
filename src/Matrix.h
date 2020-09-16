@@ -23,15 +23,15 @@ double fRand(double fMin, double fMax);
 class Matrix {
 	IndexType m_rowSize;
 	IndexType m_colSize;
-	double **m_matrix;
+	Array *m_matrix;
 	Array *bias;
 public:
 	Matrix(IndexType rowSize, IndexType colSize, double low, double high);
 	Matrix(IndexType rowSize, IndexType colSize, double value);
 	Matrix(initializer_list<initializer_list<double>> list);
 	virtual ~Matrix();
-	Array operator*(Array& rhs) const;
-	double*& operator[](const IndexType &index);
+	Array dot(Array& rhs) const;
+	Array& operator[](const IndexType &index);
 	void print(char *text) const;
 	IndexType getRows() const;
 	IndexType getCols() const;

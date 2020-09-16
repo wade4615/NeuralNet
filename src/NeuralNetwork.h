@@ -26,12 +26,14 @@ class NeuralNetwork {
 	Array middleLayer;
 	Matrix middleOutputWeights;
 	Array outputLayer;
+	Array outputLayerError;
+	Array middleLayerError;
 	Array hiddenLayerBias;
 	Array outputLayerBias;
 	Matrix trainingInput;
 	Matrix trainingOutput;
-	Array deltaHidden;
-	Array deltaOutput;
+	Array middleLayerDelta;
+	Array outputLayerDelta;
 	IndexType inputSize;
 	IndexType middleSize;
 	IndexType outputSize;
@@ -41,13 +43,17 @@ public:
 	virtual ~NeuralNetwork();
 	void shuffle(int *array, IndexType n);
 	void loadTrainingData(Matrix &input, Matrix &output);
+	void train(IndexType epochs);
+	IndexType getInputSize();
+	IndexType getMiddleSize();
+	IndexType getOutputSize();
+protected:
 	double sigmoid(double x);
 	double sigmoidDerivative(double x);
 	Array sigmoid(Array layerIn);
 	Array sigmoidDerivative(Array layerIn);
-	IndexType getInputSize();
-	IndexType getMiddleSize();
-	IndexType getOutputSize();
-	void train(IndexType epochs);
+	Array dot(Matrix& lhs, Array& rhs);
+	Array abs(Array rhs);
+	double mean(Array rhs);
 };
 #endif /* NEURALNETWORK_H_ */

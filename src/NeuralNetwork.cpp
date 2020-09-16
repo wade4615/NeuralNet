@@ -17,12 +17,14 @@ NeuralNetwork::NeuralNetwork(IndexType inputSize, IndexType middleSize, IndexTyp
 		middleLayer(middleSize, 0.0, 1.0),
 		middleOutputWeights(middleSize, outputSize, 0.0, 1.0),
 		outputLayer(outputSize, 0.0, 1.0),
+		outputLayerError(outputSize, 0.0, 1.0),
+		middleLayerError(middleSize, 0.0, 1.0),
 		hiddenLayerBias(middleSize, -1.0),
 		outputLayerBias(outputSize, -1.0),
 		trainingInput(inputSize, exampleSize, 0.0, 1.0),
 		trainingOutput(outputSize, exampleSize, 0.0, 1.0),
-		deltaHidden(middleSize, 0.0, 1.0),
-		deltaOutput(outputSize, 0.0, 1.0) {
+		middleLayerDelta(middleSize, 0.0, 1.0),
+		outputLayerDelta(outputSize, 0.0, 1.0) {
 }
 
 NeuralNetwork::~NeuralNetwork() {
@@ -82,6 +84,26 @@ IndexType NeuralNetwork::getOutputSize() {
 	return outputSize;
 }
 
+Array NeuralNetwork::dot(Matrix& lhs, Array& rhs) {
+	return lhs.dot(rhs);
+}
+
+Array NeuralNetwork::abs(Array rhs) {
+    Array temp(rhs.getSize(),0);
+	for(auto i=0; i<rhs.getSize(); i++) {
+		temp[i] = std::abs(rhs[i]);
+	}
+    return temp;
+}
+
+double NeuralNetwork::mean(Array rhs) {
+    double total = 0;
+	for(auto i=0; i<rhs.getSize(); i++) {
+		total+= rhs[i];
+	}
+    return total/((double)rhs.getSize());
+}
+
 void NeuralNetwork::train(IndexType epochs) {
 	cout << "examples=" << numTrainingSets << endl;
 	int *trainingSetOrder = new int[numTrainingSets];
@@ -94,48 +116,38 @@ void NeuralNetwork::train(IndexType epochs) {
 			int i = trainingSetOrder[x];
 
 			// Forward pass
-			for (auto k = 0; k < inputSize; k++) {
-				inputLayer[k] = trainingInput[i][k];
-			}
+			inputLayer = trainingInput[i];
 
 			inputMiddleWeights.setBias(&hiddenLayerBias);
-			middleLayer = sigmoid(inputMiddleWeights * inputLayer);
+			middleLayer = sigmoid(dot(inputMiddleWeights, inputLayer));
 
 			middleOutputWeights.setBias(&outputLayerBias);
-			outputLayer = sigmoid(middleOutputWeights * middleLayer);
+			outputLayer = sigmoid(dot(middleOutputWeights, middleLayer));
 
 			// Backprop
-			double netError = 0.0;
-			for (int j = 0; j < outputSize; j++) {
-				double errorOutput = (trainingOutput[i][j] - outputLayer[j]);
-				deltaOutput[j] = errorOutput * sigmoidDerivative(outputLayer[j]);
-				netError += 0.5 * pow(errorOutput, 2);
-			}
-			if ((n % 1000) == 0) {
-				cout << "network error = " << fixed << setprecision(12) << netError << endl;
-			}
+			outputLayerError = trainingOutput[i] - outputLayer;
 
-			for (int j = 0; j < middleSize; j++) {
-				double errorHidden = 0.0f;
-				for (int k = 0; k < outputSize; k++) {
-					errorHidden += deltaOutput[k] * middleOutputWeights[j][k];
-				}
-				deltaHidden[j] = errorHidden * sigmoidDerivative(middleLayer[j]);
-			}
+			cout << "Error : " << fixed << setprecision(6) << mean(abs(outputLayerError)) << endl;
 
-			for (int j = 0; j < outputSize; j++) {
-				outputLayerBias[j] += deltaOutput[j] * lr;
-				for (int k = 0; k < middleSize; k++) {
-					middleOutputWeights[k][j] += middleLayer[k] * deltaOutput[j] * lr;
-				}
-			}
+	        outputLayerDelta = outputLayerError*sigmoidDerivative(outputLayer);
 
-			for (int j = 0; j < middleSize; j++) {
-				hiddenLayerBias[j] += deltaHidden[j] * lr;
-				for (int k = 0; k < inputSize; k++) {
-					inputMiddleWeights[k][j] += trainingInput[i][k]	* deltaHidden[j] * lr;
-				}
-			}
+	        middleLayerError = dot(middleOutputWeights, outputLayerDelta);
+
+	        middleLayerDelta = middleLayerError * sigmoidDerivative(middleLayer);
+
+//			for (int j = 0; j < outputSize; j++) {
+//				outputLayerBias[j] += deltaOutput[j] * lr;
+//				for (int k = 0; k < middleSize; k++) {
+//					middleOutputWeights[k][j] += middleLayer[k] * deltaOutput[j] * lr;
+//				}
+//			}
+//
+//			for (int j = 0; j < middleSize; j++) {
+//				hiddenLayerBias[j] += deltaHidden[j] * lr;
+//				for (int k = 0; k < inputSize; k++) {
+//					inputMiddleWeights[k][j] += trainingInput[i][k]	* deltaHidden[j] * lr;
+//				}
+//			}
 		}
 	}
 }

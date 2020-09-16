@@ -6,17 +6,15 @@
 // Description : implementation for the matrix class implementation
 //============================================================================
 #include "Matrix.h"
+#include "Array.h"
 
 Matrix::Matrix(unsigned rowSize, unsigned colSize, double low, double high) {
 	bias = NULL;
 	m_rowSize = rowSize;
 	m_colSize = colSize;
-	m_matrix = new double*[rowSize];
+	m_matrix = new Array[rowSize];
 	for (IndexType i = 0; i < rowSize; i++) {
-		m_matrix[i] = new double[colSize];
-		for (IndexType j = 0; j < colSize; j++) {
-			m_matrix[i][j] = fRand(low, high);
-		}
+		m_matrix[i].setup(colSize, fRand(low, high));
 	}
 }
 
@@ -24,12 +22,9 @@ Matrix::Matrix(unsigned rowSize, unsigned colSize, double value) {
 	bias = NULL;
 	m_rowSize = rowSize;
 	m_colSize = colSize;
-	m_matrix = new double*[rowSize];
+	m_matrix = new Array[rowSize];
 	for (IndexType i = 0; i < rowSize; i++) {
-		m_matrix[i] = new double[colSize];
-		for (IndexType j = 0; j < colSize; j++) {
-			m_matrix[i][j] = value;
-		}
+		m_matrix[i].setup(colSize, value);
 	}
 }
 
@@ -37,9 +32,9 @@ Matrix::Matrix(initializer_list<initializer_list<double>> list) {
 	bias = NULL;
 	m_rowSize = (int) list.size();
 	m_colSize = (int) (list.begin())->size();
-	m_matrix = new double*[m_rowSize];
+	m_matrix = new Array[m_rowSize];
 	for (auto i = 0; i < m_rowSize; i++) {
-		m_matrix[i] = new double[m_colSize];
+		m_matrix[i].setup(m_colSize, 0);
 		for (auto j = 0; j < m_colSize; j++) {
 			m_matrix[i][j] = ((list.begin() + i)->begin())[j];
 		}
@@ -47,13 +42,10 @@ Matrix::Matrix(initializer_list<initializer_list<double>> list) {
 }
 
 Matrix::~Matrix() {
-	for (IndexType i = 0; i < m_rowSize; i++) {
-		delete[] m_matrix[i];
-	}
 	delete[] m_matrix;
 }
 
-Array Matrix::operator*(Array& rhs) const {
+Array Matrix::dot(Array& rhs) const {
     Array temp(rhs.getSize(),false);
 	for(IndexType i=0; i<rhs.getSize(); i++) {
 		double accumulate = 0;
@@ -69,7 +61,7 @@ Array Matrix::operator*(Array& rhs) const {
     return temp;
 }
 
-double*& Matrix::operator[](const IndexType &index) {
+Array& Matrix::operator[](const IndexType &index) {
 	return m_matrix[index];
 }
 
