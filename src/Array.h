@@ -23,7 +23,6 @@ class Array {
 	IndexType m_size;
 	double *m_matrix;
 public:
-	Array(Array &other);
 	Array(IndexType size, double low, double high);
 	Array(IndexType size, double value);
 	virtual ~Array();

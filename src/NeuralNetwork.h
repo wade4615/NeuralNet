@@ -37,15 +37,14 @@ class NeuralNetwork {
 	IndexType outputSize;
 	IndexType numTrainingSets;
 public:
-	NeuralNetwork(IndexType inputSize, IndexType middleSize,
-			IndexType outputSize, IndexType exampleSize);
+	NeuralNetwork(IndexType inputSize, IndexType middleSize, IndexType outputSize, IndexType exampleSize);
 	virtual ~NeuralNetwork();
 	void shuffle(int *array, IndexType n);
 	void loadTrainingData(Matrix &input, Matrix &output);
 	double sigmoid(double x);
 	double sigmoidDerivative(double x);
-	Array& sigmoid(Array &layerIn);
-	Array& sigmoidDerivative(Array &layerIn);
+	Array sigmoid(Array layerIn);
+	Array sigmoidDerivative(Array layerIn);
 	IndexType getInputSize();
 	IndexType getMiddleSize();
 	IndexType getOutputSize();

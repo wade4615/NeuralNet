@@ -54,18 +54,18 @@ double NeuralNetwork::sigmoidDerivative(double x) {
 	return sigmoid(x) * (1 - sigmoid(x));
 }
 
-Array& NeuralNetwork::sigmoid(Array &layerIn) {
-	Array layerOut(layerIn);
+Array NeuralNetwork::sigmoid(Array layerIn) {
+	Array layerOut(layerIn.getSize(),0);
 	for (auto j = 0; j < layerIn.getSize(); j++) {
 		layerOut[j] = sigmoid(layerIn[j]);
 	}
 	return layerOut;
 }
 
-Array& NeuralNetwork::sigmoidDerivative(Array &layerIn) {
-	Array layerOut(layerIn);
+Array NeuralNetwork::sigmoidDerivative(Array layerIn) {
+	Array layerOut(layerIn.getSize(),0);
 	for (auto j = 0; j < layerIn.getSize(); j++) {
-		layerOut[j] = sigmoidDerivative(layerIn[j]);
+		layerIn[j] = sigmoidDerivative(layerIn[j]);
 	}
 	return layerOut;
 }
@@ -93,71 +93,49 @@ void NeuralNetwork::train(IndexType epochs) {
 		for (int x = 0; x < numTrainingSets; x++) {
 			int i = trainingSetOrder[x];
 
-			cout << "epoch : " << n << " example : " << i << endl;
-			trainingInput.print("training input");
-			trainingOutput.print("training output");
-
-			inputMiddleWeights.print("input middle weights");
-			middleOutputWeights.print("middle output weights");
-
 			// Forward pass
 			for (auto k = 0; k < inputSize; k++) {
 				inputLayer[k] = trainingInput[i][k];
 			}
 
 			inputMiddleWeights.setBias(&hiddenLayerBias);
-			middleLayer = inputMiddleWeights * inputLayer;
-			//middleLayer = sigmoid(middleLayer);
-			middleLayer.print("middle layer");
+			middleLayer = sigmoid(inputMiddleWeights * inputLayer);
 
 			middleOutputWeights.setBias(&outputLayerBias);
-			outputLayer = middleOutputWeights * middleLayer;
-			//outputLayer = sigmoid(outputLayer);
-			outputLayer.print("output layer");
+			outputLayer = sigmoid(middleOutputWeights * middleLayer);
 
 			// Backprop
 			double netError = 0.0;
 			for (int j = 0; j < outputSize; j++) {
 				double errorOutput = (trainingOutput[i][j] - outputLayer[j]);
-				deltaOutput[j] = errorOutput
-						* sigmoidDerivative(outputLayer[j]);
+				deltaOutput[j] = errorOutput * sigmoidDerivative(outputLayer[j]);
 				netError += 0.5 * pow(errorOutput, 2);
 			}
-			deltaOutput.print("delta output layer");
-			if ((n % 1000) == 0)
-				cout << "network error = " << fixed << setprecision(12)
-						<< netError << endl;
+			if ((n % 1000) == 0) {
+				cout << "network error = " << fixed << setprecision(12) << netError << endl;
+			}
 
 			for (int j = 0; j < middleSize; j++) {
 				double errorHidden = 0.0f;
 				for (int k = 0; k < outputSize; k++) {
 					errorHidden += deltaOutput[k] * middleOutputWeights[j][k];
 				}
-				deltaHidden[j] = errorHidden
-						* sigmoidDerivative(middleLayer[j]);
+				deltaHidden[j] = errorHidden * sigmoidDerivative(middleLayer[j]);
 			}
-			deltaHidden.print("delta hidden layer");
 
 			for (int j = 0; j < outputSize; j++) {
 				outputLayerBias[j] += deltaOutput[j] * lr;
 				for (int k = 0; k < middleSize; k++) {
-					middleOutputWeights[k][j] += middleLayer[k] * deltaOutput[j]
-							* lr;
+					middleOutputWeights[k][j] += middleLayer[k] * deltaOutput[j] * lr;
 				}
 			}
-			middleOutputWeights.print("middle output weights");
 
 			for (int j = 0; j < middleSize; j++) {
 				hiddenLayerBias[j] += deltaHidden[j] * lr;
 				for (int k = 0; k < inputSize; k++) {
-					inputMiddleWeights[k][j] += trainingInput[i][k]
-							* deltaHidden[j] * lr;
+					inputMiddleWeights[k][j] += trainingInput[i][k]	* deltaHidden[j] * lr;
 				}
 			}
-			inputMiddleWeights.print("input middle weights");
-			cout
-					<< "------------------------------------------------------------------------------------"
-					<< endl;
 		}
 	}
 }

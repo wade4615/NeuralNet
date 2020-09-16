@@ -7,16 +7,6 @@
 //============================================================================
 #include "Array.h"
 
-Array::Array(Array &other) {
-	if (m_matrix != NULL)
-		delete[] m_matrix;
-	m_size = other.getSize();
-	m_matrix = new double[m_size];
-	for (auto i = 0; i < m_size; i++) {
-		m_matrix[i] = other[i];
-	}
-}
-
 Array::Array(unsigned size, double low, double high) {
 	m_size = size;
 	m_matrix = new double[m_size];

@@ -53,43 +53,20 @@ Matrix::~Matrix() {
 	delete[] m_matrix;
 }
 
-Matrix Matrix::operator*(Matrix &other) {
-	Matrix *multip = new Matrix(m_rowSize, other.getCols(), false);
-	if (m_colSize == other.getRows()) {
-		IndexType i, j, k;
-		double temp = 0.0;
-		for (i = 0; i < m_rowSize; i++) {
-			for (j = 0; j < other.getCols(); j++) {
-				double temp;
-				if (bias == NULL)
-					temp = 0;
-				else
-					temp = (*bias)[i];
-				for (k = 0; k < m_colSize; k++) {
-					temp += m_matrix[i][k] * other[k][j];
-				}
-				(*multip)[i][j] = temp;
-			}
+Array Matrix::operator*(Array& rhs) const {
+    Array temp(rhs.getSize(),false);
+	for(IndexType i=0; i<rhs.getSize(); i++) {
+		double accumulate = 0;
+        if (bias == NULL)
+        	accumulate = 0;
+        else
+        	accumulate = (*bias)[i];
+		for(IndexType j=0; j<m_rowSize; j++) {
+			accumulate += m_matrix[i][j] * rhs[j];
 		}
-		return *multip;
+		temp[i] = accumulate;
 	}
-	return *this;
-}
-
-Array& Matrix::operator*(Array &other) {
-	Array temp(other.getSize(), 0.0);
-	for (auto i = 0; i < other.getSize(); i++) {
-		double acumulate = 0;
-		if (bias == NULL)
-			acumulate = 0;
-		else
-			acumulate = (*bias)[i];
-		for (auto j = 0; j < m_rowSize; j++) {
-			acumulate += m_matrix[i][j] * other[j];
-		}
-		temp[i] += acumulate;
-	}
-	return temp;
+    return temp;
 }
 
 double*& Matrix::operator[](const IndexType &index) {

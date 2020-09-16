@@ -30,8 +30,7 @@ public:
 	Matrix(IndexType rowSize, IndexType colSize, double value);
 	Matrix(initializer_list<initializer_list<double>> list);
 	virtual ~Matrix();
-	Matrix operator*(Matrix &other);
-	Array& operator*(Array &other);
+	Array operator*(Array& rhs) const;
 	double*& operator[](const IndexType &index);
 	void print(char *text) const;
 	IndexType getRows() const;
