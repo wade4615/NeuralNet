@@ -118,10 +118,8 @@ void NeuralNetwork::train(IndexType epochs) {
 			// Forward pass
 			inputLayer = trainingInput[i];
 
-			inputMiddleWeights.setBias(&hiddenLayerBias);
 			middleLayer = sigmoid(dot(inputMiddleWeights, inputLayer));
 
-			middleOutputWeights.setBias(&outputLayerBias);
 			outputLayer = sigmoid(dot(middleOutputWeights, middleLayer));
 
 			// Backprop
@@ -135,19 +133,17 @@ void NeuralNetwork::train(IndexType epochs) {
 
 	        middleLayerDelta = middleLayerError * sigmoidDerivative(middleLayer);
 
-//			for (int j = 0; j < outputSize; j++) {
-//				outputLayerBias[j] += deltaOutput[j] * lr;
-//				for (int k = 0; k < middleSize; k++) {
-//					middleOutputWeights[k][j] += middleLayer[k] * deltaOutput[j] * lr;
-//				}
-//			}
-//
-//			for (int j = 0; j < middleSize; j++) {
-//				hiddenLayerBias[j] += deltaHidden[j] * lr;
-//				for (int k = 0; k < inputSize; k++) {
-//					inputMiddleWeights[k][j] += trainingInput[i][k]	* deltaHidden[j] * lr;
-//				}
-//			}
+			for (int j = 0; j < outputSize; j++) {
+				for (int k = 0; k < middleSize; k++) {
+					middleOutputWeights[k][j] += middleLayer[k] * outputLayerDelta[j];
+				}
+			}
+
+			for (int j = 0; j < middleSize; j++) {
+				for (int k = 0; k < inputSize; k++) {
+					inputMiddleWeights[k][j] += trainingInput[i][k]	* middleLayerDelta[j];
+				}
+			}
 		}
 	}
 }

@@ -78,6 +78,10 @@ Array operator *(Array lhs, Array rhs) {
     return temp;
 }
 
+Array dot(Array lhs, Array rhs) {
+	return lhs * rhs;
+}
+
 void Array::print(char *text) const {
 	cout << text << endl;
 	string delimiter = "";

@@ -33,6 +33,7 @@ public:
 	double& operator[](const IndexType &index);
 	friend Array operator-(Array lhs, Array rhs);
 	friend Array operator*(Array lhs, Array rhs);
+	friend Array dot(Array lhs, Array rhs);
 	void print(char *text) const;
 	IndexType getSize() const;
 };
